@@ -1,0 +1,24 @@
+{
+    "bashCommands": {
+        "bash": {
+            "description": "Bash shell",
+            "usage": "bash"
+        },
+        "touch": {
+            "description": "Create file",
+            "usage": "touch [-A [-][[hh]mm]SS] [-acfhm] [-r file] [-t [[CC]YY]MMDDhhmm[.SS]] file ..."
+        },
+        "mkdir": {
+            "description": "Create directory",
+            "usage": "mkdir [-pv] [-m mode] directory ..."
+        },
+        "ls": {
+            "description": "List directory contents",
+            "usage": "ls [option(s)] [file(s)]"
+        },
+        "echo": {
+            "description": "Prints text to the terminal window",
+            "usage": "echo [option(s)] [string(s)]"
+        }
+    }
+}
