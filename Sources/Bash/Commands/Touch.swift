@@ -8,18 +8,21 @@
 import Foundation
 
 class _command_touch: Command {
-    var session: ShellSession!
     
     required init(_ session: ShellSession) {
-        self.session = session
+        super.init(session)
+        name = "touch"
+        usage = "touch [-A [-][[hh]mm]SS] [-acfhm] [-r file] [-t [[CC]YY]MMDDhhmm[.SS]] file ..."
     }
     
-    func execute(_ args: [String]) -> Int {
+    override func execute(_ args: [String]) -> Int {
         do {
+            _ = try args.get(1)
+            
 //            var urls = [URL?]()
 //            for a in 0...args.count-1 {
 //                if a != 0 {
-//                    let split = String(args.get(a)).split(separator: ".")
+//                    let split = String(try args.get(a)).split(separator: ".")
 //                    let filename = String(split.dropLast().joined(separator: "."))
 //
 //                    let dir = getPathWith(dir: filename)
@@ -39,7 +42,10 @@ class _command_touch: Command {
 //                addErrorToHistory(error, arguments: args)
 //            }
         } catch {
-            
+            if !args.indices.contains(1) {
+                session.stderr.appendOutput(1, usage)
+                return 1
+            }
         }
         return 0
     }

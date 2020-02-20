@@ -32,18 +32,29 @@ class Bash {
             -  255\* - Exit status out of range
      */
     func execute(args: [String], completion: @escaping (_ exit: Int) -> Void) {
+        session.stdin.appendOutput(0, args.joined(separator: " "))
+        
         do {
-            let command = args.get(0)!
+            let command = try args.get(0)
             if let command = find(command: command) {
-                try session.writeTo(session.stdout, content: "Command found \(command)")
-                completion(command.execute(args))
+                let output = command.execute(args)
+                completion(output)
             } else {
-                try session.writeTo(session.stderr, content: "Command not found \(command))")
+                session.stderr.appendOutput(127, "-bash: \(command): command not found")
                 completion(127)
             }
-        } catch {
-            try! session.writeTo(session.stderr, content: "Unexpectedly crashed")
-            completion(128)
+        } catch let error as NSError {
+            if error.domain == "array.get" {
+                if error.code == 404 {
+                    if error.userInfo["index"] as? Int == 0 {
+                        session.stderr.appendOutput(0, "-bash: 0: command not found")
+                        completion(0)
+                    }
+                }
+            } else {
+                session.stderr.appendOutput(128, "Fatal error")
+                completion(128)
+            }
         }
     }
     
@@ -62,5 +73,35 @@ class Bash {
             return bashCommand.init(session)
         }
         return nil
+    }
+    
+    /**
+     Finds and returns a list of all bash commands available
+     
+     - Returns
+        List of classes available to use with bash in the project
+     */
+    func findAllCommands() -> [Command]? {
+        let commandClassInfo = ClassInfo(Command.self)!
+        var subclassList = [ClassInfo]()
+        var commandsList = [Command]()
+
+        var count = UInt32(0)
+        let classList = objc_copyClassList(&count)!
+
+        for i in 0..<Int(count) {
+            if let classInfo = ClassInfo(classList[i]),
+                let superclassInfo = classInfo.superclassInfo,
+                superclassInfo == commandClassInfo
+            {
+                subclassList.append(classInfo)
+            
+                if let bashCommand = classInfo.classObject as? Command.Type {
+                    commandsList.append(bashCommand.init(session))
+                }
+            }
+        }
+        
+        return commandsList
     }
 }

@@ -1,24 +1,168 @@
 {
-    "bashCommands": {
+    "commandSpecs": {
         "bash": {
-            "description": "Bash shell",
-            "usage": "bash"
+            "name": "bash",
+            "manual": "Bash shell"
         },
         "touch": {
-            "description": "Create file",
+            "name": "touch",
+            "manual": "Create a file",
             "usage": "touch [-A [-][[hh]mm]SS] [-acfhm] [-r file] [-t [[CC]YY]MMDDhhmm[.SS]] file ..."
         },
-        "mkdir": {
-            "description": "Create directory",
-            "usage": "mkdir [-pv] [-m mode] directory ..."
+        "echo": {
+            "name": "echo",
+            "manual": "Prints text with a new line",
+            "usage": "echo [-neE] [arg ...]"
         },
         "ls": {
-            "description": "List directory contents",
-            "usage": "ls [option(s)] [file(s)]"
+            "name": "ls",
+            "manual": "List directory contents",
+            "usage": "ls [-a] [dir]"
         },
-        "echo": {
-            "description": "Prints text to the terminal window",
-            "usage": "echo [option(s)] [string(s)]"
+        "mkdir": {
+            "name": "mkdir",
+            "manual": "Create a directory",
+            "usage": "mkdir [-pv] [-m mode] directory ..."
+        },
+        "grep": {
+            "name": "grep",
+            "manual": "Search through last output or file",
+            "usage": "grep [-abcDEFGHhIiJLlmnOoqRSsUVvwxZ] [-A num] [-B num] [-C[num]] [-e pattern] [-f file] [--binary-files=value] [--color=when] [--context[=num]] [--directories=action] [--label] [--line-buffered] [--null] [pattern] [file ...]"
+        },
+        "man": {
+            "name": "man",
+            "manual": "Print manual or get help for a command",
+            "usage": "man [-adfhktwW] [section] [-M path] [-P pager] [-S list] [-m system] [-p string] name ..."
+        },
+        "pwd": {
+            "name": "pwd",
+            "manual": "Print working directory",
+            "usage": "pwd [-LP]",
+        },
+        "cd": {
+            "name": "cd",
+            "manual": "Change directory",
+            "usage": "cd [-L|-P] [dir]"
+        },
+        "mv": {
+            "name": "mv",
+            "manual": "Move or rename directory",
+            "usage": "mv [-f | -i | -n] [-v] source target \nmv [-f | -i | -n] [-v] source ... directory"
+        },
+        "rm": {
+            "name": "rm",
+            "manual": "Remove file or directory",
+            "usage": "rm [-f | -i] [-dPRrvW] file ..."
+        },
+        "rmdir": {
+            "name": "rmdir",
+            "manual": "Remove directory",
+            "usage": "rmdir [-p] directory ..."
+        },
+        "locate": {
+            "name": "locate",
+            "manual": "Locate a specific file or directory",
+            "usage": "locate [-0Scims] [-l limit] [-d database] pattern ..."
+        },
+        "less": {
+            "name": "less",
+            "manual": "View the contents of a text file"
+        },
+        "compgen": {
+            "name": "compgen",
+            "manual": "Shows all available commands, aliases, and functions",
+            "usage": "compgen [-abcdefgjksuv] [-o option] [-A action] [-G globpat] [-W wordlist] [-P prefix] [-S suffix] [-X filterpat] [-F function] [-C command] [word]"
+        },
+        "cat": {
+            "name": "cat",
+            "manual": "Read a file, create a file, and concatenate files",
+            "usage": "cat [-benstuv] [file ...]"
+        },
+        "head": {
+            "name": "head",
+            "manual": "Read the start of a file",
+            "usage": "head [-n lines | -c bytes] [file ...]"
+        },
+        "tail": {
+            "name": "tail",
+            "manual": "Read the end of a file",
+            "usage": "tail [-F | -f | -r] [-q] [-b # | -c # | -n #] [file ...]"
+        },
+        "chmod": {
+            "name": "chmod",
+            "manual": "Sets the file permissions flag on a file or folder",
+            "usage": "chmod [-fhv] [-R [-H | -L | -P]] [-a | +a | =a  [i][# [ n]]] mode|entry file ... \nchmod [-fhv] [-R [-H | -L | -P]] [-E | -C | -N | -i | -I] file ..."
+        },
+        "exit": {
+            "name": "exit",
+            "manual": "Exit out of a directory"
+        },
+        "history": {
+            "name": "history",
+            "manual": "List most recent commands",
+            "usage": "history [-c] [-d offset] [n] \nhistory -awrn [filename] \nhistory -ps arg [arg...]"
+        },
+        "clear": {
+            "name": "clear",
+            "manual": "Clear terminal window"
+        },
+        "cp": {
+            "name": "cp",
+            "manual": "Copy files and directories",
+            "usage": "cp [-R [-H | -L | -P]] [-fi | -n] [-apvXc] source_file target_file \ncp [-R [-H | -L | -P]] [-fi | -n] [-apvXc] source_file ... target_directory"
+        },
+        "kill": {
+            "name": "kill",
+            "manual": "Terminate processes"
+        },
+        "sleep": {
+            "name": "sleep",
+            "manual": "Delay a process for a specified amount of time",
+            "usage": "sleep seconds"
+        },
+        "open": {
+            "name": "open",
+            "manual": "Opens files from a shell",
+            "usage": "open [-e] [-t] [-f] [-W] [-R] [-n] [-g] [-h] [-s <partial SDK name>][-b <bundle identifier>] [-a <application>] [filenames] [--args arguments]"
+        },
+        "printf": {
+            "name": "printf",
+            "manual": "Prints text without a new line",
+            "usage": "printf [-v var] format [arguments]"
+        },
+        "uname": {
+            "name": "uname",
+            "manual": "Display system information",
+            "usage": "uname [-amnprsv]"
+        },
+        "unset": {
+            "name": "unset",
+            "manual": "",
+            "usage": "unset [-f] [-v] [name ...]"
+        },
+        "export": {
+            "name": "export",
+            "manual": "Export a variable or function to the environment of all the child processes running in the current shell",
+            "usage": "export [-nf] [name[=value] ...] \nexport -p"
+        },
+        "let": {
+            "name": "let",
+            "manual": "Perform arithmetic operations"
+        },
+        "set": {
+            "name": "set",
+            "manual": "Set or unset values of shell options and positional parameters",
+            "usage": "set [-abefhkmnptuvxBCHP] [-o option-name] [--] [arg ...]"
+        },
+        "env": {
+            "name": "env",
+            "manual": "View All System Variables",
+            "usage": "env [-iv] [-P utilpath] [-S string] [-u name] [name=value ...] [utility [argument ...]]"
+        },
+        "printenv": {
+            "name": "printenv",
+            "manual": "View All System Variables",
+            "usage": "printenv [name]"
         }
     }
 }
