@@ -69,7 +69,7 @@ class ShellSession {
     /// Home path of the current user that created the shell session
     var homePath: NSURL
     /// The current path the session is operating in
-    var path: NSURL
+    var currentPath: NSURL
     
     /**
      Prompt displayed before the user input field
@@ -109,7 +109,7 @@ class ShellSession {
         get {
             let lineStorage = [
                 "\\h": storage.get()["HOSTNAME"] ?? "bash",
-                "\\W": path == homePath ? "~" : path.pathComponents?.last ?? "~",
+                "\\W": currentPath == homePath ? "~" : currentPath.pathComponents?.last ?? "~",
                 "\\u": storage.get()["USER"] ?? "user",
                 "\\$": "$"
             ]
@@ -135,6 +135,34 @@ class ShellSession {
         ])
         
         homePath = rootPath.appendingPathComponent(home)! as NSURL
-        path = homePath
+        currentPath = homePath
+    }
+    
+    enum PathIndex { case root, home, current }
+    func solveDirectoryRoot(path: String) -> PathIndex {
+        switch path.first {
+        case "/": return .root
+        case "~": return .home
+        default: return .current
+        }
+    }
+    func getPathURL(withPath path: String) -> NSURL {
+        let dirRoot = solveDirectoryRoot(path: path)
+        let pathDir = dirRoot == .home ? homePath : dirRoot == .root ? rootPath : currentPath
+        return pathDir
+    }
+    func getFilePathURL(withFile path: String) -> NSURL {
+        let dirRoot = getPathURL(withPath: path)
+        let newFilePath = trimPath(dir: path)
+        let pathDir = dirRoot.appendingPathComponent(newFilePath)
+        return pathDir! as NSURL
+    }
+    func trimPath(dir: String) -> String {
+        let trimFile = dir.starts(with: "~")
+        ? String(dir.dropFirst())
+        : dir.starts(with: "~/")
+            ? String(dir.dropFirst().dropFirst())
+            : dir
+        return trimFile
     }
 }

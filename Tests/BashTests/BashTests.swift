@@ -12,7 +12,7 @@ class BashInit: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let developer = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.developerApplicationDirectory, .userDomainMask, true)[0])
+        let developer = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
         
         /// /Users/`USERNAME`/Developer/Applications/BashSwift/XCTestRoot
         let root = developer.appendingPathComponent("BashSwift/XCTestRoot") as NSURL?

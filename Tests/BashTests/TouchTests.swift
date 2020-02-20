@@ -14,5 +14,14 @@ final class TouchTests: BashInit {
             XCTAssert(stderr.last?.stream.starts(with: "touch") ?? true)
         }
     }
+    
+    func testFileCreation() {
+        bash.execute(args: ["touch", "xctest.txt"]) { (exit) in
+            // Returns 1: File does not exist
+        }
+        // Use mkdir
+        // Create file again, check with ls
+        // Delete folder, check with ls again
+    }
 
 }
