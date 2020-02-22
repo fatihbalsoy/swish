@@ -7,10 +7,10 @@
 
 import Foundation
 
-class Bash {
-    var session: ShellSession!
+public class Bash {
+    public var session: ShellSession!
     
-    required init(session: ShellSession) {
+    public required init(session: ShellSession) {
         self.session = session
     }
     
@@ -32,30 +32,57 @@ class Bash {
             -  255\* - Exit status out of range
      */
     func execute(args: [String], completion: @escaping (_ exit: Int) -> Void) {
-        session.stdin.appendOutput(0, args.joined(separator: " "))
+        _ = session.stdin.appendOutput(0, [args.joined(separator: " ")], Command(session))
         
         do {
             let command = try args.get(0)
-            if let command = find(command: command) {
-                let output = command.execute(args)
+            if let command = self.find(command: command) {
+                let arguments = Array(args[1..<args.endIndex])
+                let output = command.execute(arguments)
                 completion(output)
+            } else if args[0] == "" {
+                completion(0)
             } else {
-                session.stderr.appendOutput(127, "-bash: \(command): command not found")
+                self.session.stderr.appendOutput(127, ["-bash: \(command): command not found"], Command(session))
                 completion(127)
             }
         } catch let error as NSError {
             if error.domain == "array.get" {
                 if error.code == 404 {
                     if error.userInfo["index"] as? Int == 0 {
-                        session.stderr.appendOutput(0, "-bash: 0: command not found")
+                        session.stderr.appendOutput(0, ["-bash: 0: command not found"], Command(session), error)
                         completion(0)
                     }
                 }
             } else {
-                session.stderr.appendOutput(128, "Fatal error")
+                session.stderr.appendOutput(128, ["Fatal error"], Command(session), error)
                 completion(128)
             }
         }
+    }
+    
+    /**
+        - Parameters:
+            - input: The input given by the user
+            - completion: Run code after bash command is complete
+            - exit: Exit code returned when execution is complete
+     
+        - Returns:
+            -  0 - The execution had no problems
+            -  1 - Catchall for general errors
+            -  2 - Misuse of shell builtins (according to Bash documentation)
+            -  126 - Command invoked cannot execute
+            -  127 - “command not found”
+            -  128 - Invalid argument to exit
+            -  128+n - Fatal error signal “n”
+            -  130 - Script terminated by Control-C
+            -  255\* - Exit status out of range
+     */
+    public func execute(_ input: String, completion: @escaping (_ exit: Int) -> Void) {
+        let args = session.convertToArguments(input: input)
+        execute(args: args, completion: { (exit) in
+            completion(exit)
+        })
     }
     
     /**

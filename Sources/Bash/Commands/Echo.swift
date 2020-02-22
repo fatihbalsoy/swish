@@ -16,8 +16,8 @@ class _command_echo: Command {
     }
     
     override func execute(_ args: [String]) -> Int {
-        let arg = args.dropFirst().joined(separator: " ")
-        session.stdout.appendOutput(0, arg)
+        let arg = args.joined(separator: " ")
+        session.stdout.appendOutput(0, [arg], self)
         return 0
     }
 }

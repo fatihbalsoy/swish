@@ -7,62 +7,34 @@
 
 import Foundation
 
-class Shell {
-    /**
-     Stores every shell session created using the `createSession()` function to easily switch between environments.
-     */
-    static var sessions = [String : ShellSession]()
-    /// The UUID of the current shell session
-    static var mainSession: String?
+public struct StandardStream {
+    public var exitCode: Int
+    public var stream: [String]
+    public var error: Error?
     
-    /// Root path of the current shell environment
-    let root: NSURL
-    
-    init(root: NSURL? = nil) {
-        let url = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
-        let safeguard = url.appendingPathComponent("BashSwift/root")
-        self.root = root ?? safeguard! as NSURL
-    }
-    
-    /**
-     Creates a new shell session and returns it when complete.
-     If it already exists, the function just returns the session and skips creating it.
-     */
-    func session (user: String = "user", hostname: String = "hostname", uuid: String = UUID().uuidString, completion: @escaping (_ exists: Bool, _ session: ShellSession) -> Void) {
-        
-        if Shell.mainSession == nil { Shell.mainSession = uuid }
-        
-        if let session = Shell.sessions[uuid] {
-            completion(true, session)
-        } else {
-            let session = ShellSession(user: user, hostname: hostname, root: root, uuid: uuid)
-            Shell.sessions[uuid] = session
-            completion(false, session)
-        }
+    public init(exitCode: Int, stream: [String], error: Error? = nil) {
+        self.exitCode = exitCode
+        self.stream = stream
+        self.error = error
     }
 }
 
-struct StandardStream {
-    var exitCode: Int
-    var stream: String
-}
-
-class ShellSession {
+public class ShellSession {
     
     /// Standard input is a stream from which a program reads its input data.
-    var stdin = [StandardStream]()
+    public var stdin = [StandardStream]()
     
     /// Standard output is a stream to which a program writes its output data.
-    var stdout = [StandardStream]()
+    public var stdout = [StandardStream]()
     
     /// Standard error is another output stream typically used by programs to output error messages or diagnostics.
-    var stderr = [StandardStream]()
+    public var stderr = [StandardStream]()
     
     /// The unique identifier is used to identify the shell session between a list of other sessions.
     let uuid: String
     
     /// Stores variables created during the session
-    var storage = BashStorage()
+    public var storage = BashStorage()
     
     /// Root path of the current shell environment is set to a sandboxed documents folder
     let rootPath: NSURL
@@ -105,7 +77,7 @@ class ShellSession {
      - \\[ : begin a sequence of non-printing characters, which could be used to embed a terminal control sequence into the prompt
      - \\] : end a sequence of non-printing characters
      */
-    var prompt: String {
+    public var prompt: String {
         get {
             let lineStorage = [
                 "\\h": storage.get()["HOSTNAME"] ?? "bash",
@@ -113,11 +85,11 @@ class ShellSession {
                 "\\u": storage.get()["USER"] ?? "user",
                 "\\$": "$"
             ]
-            return storage.get()["PS1"]?.replacingOccurrences(with: lineStorage, prefix: "") ?? ""
+            return (storage.get()["PS1"]?.replacingOccurrences(with: lineStorage, prefix: "").replacingOccurrences(of: ".local", with: "") ?? "") + " "
         }
     }
     
-    init(user: String, hostname: String, root: NSURL, uuid: String = UUID().uuidString) {
+    public init(user: String, hostname: String, root: NSURL, uuid: String = UUID().uuidString) {
         self.uuid = uuid
         self.rootPath = root
         
@@ -138,7 +110,39 @@ class ShellSession {
         currentPath = homePath
     }
     
+    /**
+     Converts string to array of arguments, and replaces variables.
+     
+         let args = convertToArguments(input: 'echo "hi" "hello $w"')
+         print(args)
+         // [echo, hi, hello world]
+     */
+    func convertToArguments(input: String) -> [String] {
+//        let separator = UUID().uuidString
+//        let dollar = UUID().uuidString
+        
+//        let split = input.split(separator: "\"")
+//        var array = [String]()
+//        for s in split {
+//            array.append(s.trimmingCharacters(in: .whitespaces).replacingOccurrences(with: storage.get()))
+//        }
+        
+        return input.components(separatedBy: " ")
+    }
+    
+    /// Root, home, and current
     enum PathIndex { case root, home, current }
+    /**
+     Solves the parent path of the referenced directory
+     
+     - Parameters:
+        - path: Path that either starts with `/`, `~`, or nothing.
+     
+     - Returns:
+        - /example → PathIndex.root
+        - ~/example → PathIndex.home
+        - example → PathIndex.current
+     */
     func solveDirectoryRoot(path: String) -> PathIndex {
         switch path.first {
         case "/": return .root
@@ -146,21 +150,51 @@ class ShellSession {
         default: return .current
         }
     }
+    /**
+     Path of the input's parent.
+     
+     - Parameters:
+        - path: The path of the file prefixed by a reference to another directory or neither.
+     
+     - Returns:
+         - /example → /
+         - ~/example → /home/user/
+         - example → /home/user/Documents/
+     */
     func getPathURL(withPath path: String) -> NSURL {
         let dirRoot = solveDirectoryRoot(path: path)
+        print("DIRROOT:",dirRoot)
         let pathDir = dirRoot == .home ? homePath : dirRoot == .root ? rootPath : currentPath
         return pathDir
     }
+    
+    /**
+     Path of the file, prefixed with the parent directory
+     
+     - Parameters:
+        - path: The path of the file prefixed by a reference to another directory or neither.
+     
+     - Returns:
+         - /example → /example
+         - ~/example → /home/user/example
+         - example → /home/user/Documents/example
+     */
     func getFilePathURL(withFile path: String) -> NSURL {
         let dirRoot = getPathURL(withPath: path)
         let newFilePath = trimPath(dir: path)
         let pathDir = dirRoot.appendingPathComponent(newFilePath)
+        print("GETFILE:",path,dirRoot, newFilePath, pathDir)
         return pathDir! as NSURL
     }
+    
+    /**
+     Removes the `~` character from the directory parameter if it exists
+     
+     - Parameters:
+        - dir: Directory that might be prefixed by the `~` character
+     */
     func trimPath(dir: String) -> String {
-        let trimFile = dir.starts(with: "~")
-        ? String(dir.dropFirst())
-        : dir.starts(with: "~/")
+        let trimFile = dir.starts(with: "~/")
             ? String(dir.dropFirst().dropFirst())
             : dir
         return trimFile

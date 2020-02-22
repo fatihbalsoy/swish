@@ -7,15 +7,10 @@
 
 import Foundation
 
-protocol CommandProtocol {
-    var name: String { get set }
-    var usage: String  { get set }
-}
-
-class Command: CommandProtocol {
-    var session: ShellSession!
+open class Command {
+    public var session: ShellSession!
     
-    required init(_ session: ShellSession) {
+    required public init(_ session: ShellSession) {
         self.session = session
     }
     
@@ -28,12 +23,12 @@ class Command: CommandProtocol {
         - cd
         - echo
      */
-    var name: String = ""
+    public var name: String = ""
     
     /**
      Usage of the command if the arguments do not match the requirements
      */
-    var usage: String = ""
+    public var usage: String = ""
     
     /**
         - Parameters:
@@ -53,5 +48,5 @@ class Command: CommandProtocol {
             -  130 - Script terminated by Control-C
             -  255\* - Exit status out of range
      */
-    func execute(_ args: [String]) -> Int { return 0 }
+    open func execute(_ args: [String]) -> Int { return 0 }
 }

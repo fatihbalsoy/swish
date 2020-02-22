@@ -7,10 +7,10 @@
 
 import Foundation
 
-class BashStorage {
+public class BashStorage {
     private var variables = [String:String]()
     
-    func get() -> [String : String] {
+    public func get() -> [String : String] {
         variables["RANDOM"] = String(Int.random(in: 0 ..< 32767))
         return variables
     }

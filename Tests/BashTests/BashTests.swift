@@ -1,12 +1,13 @@
 import XCTest
 @testable import Bash
 
+let _kUUID: String = UUID().uuidString
 class BashInit: XCTestCase {
-    let uuid: String = UUID().uuidString
     var bash: Bash!
     
+    let root = "XCTestRoot"
     let hostname = "XCTest"
-    let user = "test"
+    let user = "user"
     
     // MARK: - Setup
     override func setUp() {
@@ -15,12 +16,45 @@ class BashInit: XCTestCase {
         let developer = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
         
         /// /Users/`USERNAME`/Developer/Applications/BashSwift/XCTestRoot
-        let root = developer.appendingPathComponent("BashSwift/XCTestRoot") as NSURL?
+        let rootURL = developer.appendingPathComponent("BashSwift/\(root)") as NSURL?
         
-        Shell(root: root).session(user: user, hostname: hostname, uuid: uuid) { (exists, session) in
-            XCTAssert(!exists)
+        Shell(root: rootURL).session(user: user, hostname: hostname, uuid: _kUUID) { (exists, session) in
+            print(_kUUID)
+            
+            print("stdin:")
+            for input in session.stdin {
+                print("– \(input.stream)")
+            }
+            print("")
+            print("")
+            print("stdout:")
+            for input in session.stdout {
+                print("– \(input.stream)")
+            }
+            print("")
+            print("")
+            print("stderr:")
+            for input in session.stderr {
+                print("– \(input.stream)")
+            }
+            print("")
+            print("")
+            
             self.bash = Bash(session: session)
         }
+        
+        print("sessions:",Shell.sessions)
+        self.bash.execute("cd ~") { (exit) in
+            XCTAssertEqual(0, exit)
+        }
+        
+//        bash.execute("rm -rf tmp home") { (exit) in }
+//        bash.execute("ls") { (exit) in
+//            let contains = self.bash.session.stdout.contains { (stream) -> Bool in
+//                return stream.stream == "home" || stream.stream == "tmp"
+//            }
+//            XCTAssertFalse(contains)
+//        }
     }
 }
 
@@ -36,17 +70,17 @@ final class BashTests: BashInit {
         }
         
         /// Command exists and had no problems
-        bash.execute(args: ["echo", "hi"]) { (exit) in
+        bash.execute("echo hi") { (exit) in
             XCTAssertEqual(0, exit)
         }
         
         /// Command does not exist
-        bash.execute(args: ["nonexistent"]) { (exit) in
+        bash.execute("nonexistent") { (exit) in
             XCTAssertEqual(127, exit)
         }
         
         /// Empty arguments
-        bash.execute(args: []) { (exit) in
+        bash.execute("    ") { (exit) in
             XCTAssertEqual(0, exit)
         }
     }
@@ -55,12 +89,15 @@ final class BashTests: BashInit {
         if let index = bash.findAllCommands() {
             print("\nIndexing commands:")
             for command in index {
-                if let _ = bash.find(command: command.name) {
+                let className = String(describing: command.self).replacingOccurrences(of: "Bash._command_", with: "")
+                if command.name == className {
                     let usage = command.usage.split(separator: " ").dropFirst().joined(separator: " ")
                     print("   🟢  \(command.name) \(usage)")
                     XCTAssert(true)
                 } else {
-                    print("   🔴  \(command.name)")
+                    let message = "\(className) : not equal to '\(command.name)'"
+                    print("   🔴  \(message)")
+                    XCTAssert(false, message)
                 }
             }
         } else {
@@ -71,24 +108,24 @@ final class BashTests: BashInit {
     
     // MARK: - Standard Streams
     func testStandardOutput() {
-        bash.execute(args: ["echo", "hello world", "i am a computer"]) { (exit) in
+        bash.execute("echo hello world i am a computer") { (exit) in
             let stdout = self.bash.session.stdout
-            XCTAssertEqual(stdout.last?.stream, "hello world i am a computer")
+            XCTAssertEqual(stdout.last?.stream.first, "hello world i am a computer")
             XCTAssertEqual(stdout.last?.exitCode, exit) // 0
         }
     }
     
     func testStandardInput() {
-        bash.execute(args: ["echo", "hello world", "this is another test!"]) { (exit) in
+        bash.execute("echo hello world this is another test!") { (exit) in
             let stdin = self.bash.session.stdin
-            XCTAssertEqual(stdin.last?.stream, "echo hello world this is another test!")
+            XCTAssertEqual(stdin.last?.stream.first, "echo hello world this is another test!")
             XCTAssertEqual(stdin.last?.exitCode, exit) // 0
         }
     }
     
     func testStandardError() {
         /// Command does not exist
-        bash.execute(args: ["nonexistent"]) { (exit) in
+        bash.execute("nonexistent") { (exit) in
             let stderr = self.bash.session.stderr
             XCTAssertEqual(stderr.last?.exitCode, exit) // 127
         }
@@ -102,14 +139,11 @@ final class BashTests: BashInit {
     
     // MARK: - Command Protocol
     func testCommandUsage() {
-        bash.execute(args: ["touch", "hello.txt"]) { (exit) in
-            XCTAssertEqual(0, exit)
-        }
-        bash.execute(args: ["touch"]) { (exit) in
+        bash.execute("touch") { (exit) in
             XCTAssertEqual(1, exit)
             
             let stderr = self.bash.session.stderr
-            XCTAssert(stderr.last?.stream.starts(with: "touch") ?? true)
+            XCTAssert(stderr.last?.stream.first?.starts(with: "touch") ?? false)
         }
     }
     
@@ -135,8 +169,8 @@ final class BashTests: BashInit {
     
     // MARK: - Syncronization
     func testSyncronization() {
-        bash.session.storage.set(uuid, for: "SYNC")
-        Shell().session(uuid: uuid) { (exists, session) in
+        bash.session.storage.set(_kUUID, for: "SYNC")
+        Shell().session(uuid: _kUUID) { (exists, session) in
             XCTAssertEqual(session.storage.get()["SYNC"], self.bash.session.storage.get()["SYNC"])
         }
     }
