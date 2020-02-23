@@ -16,7 +16,7 @@ class _command_date: Command {
     }
     
     override func execute(_ args: [String]) -> Int {
-        let date = Date().getFormattedDate(format: "E MMM d H:mm:ss z yyyy")
+        let date = Date().getFormattedDate(format: "E MMM d HH:mm:ss z yyyy")
         session.stdout.appendOutput(0, [date], self)
         return 0
     }

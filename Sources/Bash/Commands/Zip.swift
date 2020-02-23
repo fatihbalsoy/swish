@@ -42,14 +42,14 @@ class _command_zip: Command {
                 
                 for url in urls {
                     outputs.append("\tadding: \(url.lastPathComponent)")
-                    try Zip.zipFiles(
-                        paths: [url],
-                        zipFilePath: zip as URL,
-                        password: pwdIndex != -2 ? args[pwdIndex + 1] : nil,
-                        progress: { (progress) -> () in
-                            print(progress)
-                    })
                 }
+                try Zip.zipFiles(
+                    paths: urls,
+                    zipFilePath: zip as URL,
+                    password: pwdIndex != -2 ? args[pwdIndex + 1] : nil,
+                    progress: { (progress) -> () in
+                        print(progress)
+                })
                 session.stdout.appendOutput(0, outputs, self)
                 return 0
             } else {
@@ -77,7 +77,55 @@ class _command_unzip: Command {
     }
     
     override func execute(_ args: [String]) -> Int {
-        return 0
+        do {
+            _ = try args.get(0)
+            
+            if try args.get(0).hasSuffix(".zip") {
+                var pwdIndex: Int = -2
+                
+                var de = try args.get(0)
+                de.removeLast(4)
+                
+                let zip = session.getFilePathURL(withFile: try args.get(0))
+                let destination = session.getFilePathURL(withFile: de)
+                
+                var urls = [URL]()
+                for a in 1..<args.endIndex {
+                    let arg = args[a]
+                    if arg == "-p" && pwdIndex == -2 {
+                        pwdIndex = a
+                        _ = try args.get(a + 1)
+                    } else {
+                        if a != pwdIndex + 1 {
+                            let path = session.getFilePathURL(withFile: arg)
+                            urls.append(path as URL)
+                        }
+                    }
+                }
+                
+                print("ziploc:",zip)
+                print("destinations:",urls)
+                try Zip.unzipFile(
+                    zip as URL,
+                    destination: urls.indices.contains(0) ? urls[0] : destination as URL,
+                    overwrite: false,
+                    password: pwdIndex != -2 ? args[pwdIndex + 1] : nil,
+                    progress: { (progress) -> () in
+                        print(progress)
+                })
+                return 0
+            } else {
+                session.stderr.appendOutput(1, ["zip: Zip file structure invalid (\(try args.get(0)))"], self)
+                return 1
+            }
+        } catch let error as NSError {
+            if !args.indices.contains(0) {
+                session.stderr.appendOutput(1, [usage], self)
+                return 1
+            }
+            session.stderr.appendError(1, error, args, self)
+            return 1
+        }
     }
     
 }
