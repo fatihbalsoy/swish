@@ -12,7 +12,7 @@ class _command_mkdir: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "mkdir"
-        usage = "mkdir [-pv] [-m mode] directory ..."
+        usage = "usage: mkdir [-pv] [-m mode] directory ..."
     }
     
     override func execute(_ args: [String]) -> Int {

@@ -14,7 +14,7 @@ final class MkdirTests: BashInit {
             XCTAssertEqual(1, exit)
             
             let stderr = self.bash.session.stderr
-            XCTAssert(stderr.last?.stream.last?.starts(with: "mkdir") ?? false)
+            XCTAssert(stderr.last?.stream.last?.starts(with: "usage: mkdir") ?? false)
         }
     }
     

@@ -14,7 +14,7 @@ final class TouchTests: BashInit {
             XCTAssertEqual(1, exit)
             
             let stderr = self.bash.session.stderr
-            XCTAssert(stderr.last?.stream.first?.starts(with: "touch") ?? false)
+            XCTAssert(stderr.last?.stream.first?.starts(with: "usage: touch") ?? false)
         }
     }
     

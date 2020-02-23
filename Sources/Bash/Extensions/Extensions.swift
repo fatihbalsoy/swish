@@ -51,3 +51,17 @@ extension String {
     }
     
 }
+
+extension Date {
+    func getFormattedDate(format: String? = "yyyy-MM-dd") -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        let myString = formatter.string(from: self)
+        let yourDate = formatter.date(from: myString)
+        formatter.dateFormat = format
+        let myStringafd = formatter.string(from: yourDate!)
+        
+        return myStringafd
+    }
+}

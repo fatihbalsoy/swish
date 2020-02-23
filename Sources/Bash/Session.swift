@@ -127,7 +127,8 @@ public class ShellSession {
 //            array.append(s.trimmingCharacters(in: .whitespaces).replacingOccurrences(with: storage.get()))
 //        }
         
-        return input.components(separatedBy: " ")
+        let final = input.replacingOccurrences(with: storage.get()).components(separatedBy: " ")
+        return final
     }
     
     /// Root, home, and current
@@ -163,7 +164,6 @@ public class ShellSession {
      */
     func getPathURL(withPath path: String) -> NSURL {
         let dirRoot = solveDirectoryRoot(path: path)
-        print("DIRROOT:",dirRoot)
         let pathDir = dirRoot == .home ? homePath : dirRoot == .root ? rootPath : currentPath
         return pathDir
     }
@@ -183,7 +183,6 @@ public class ShellSession {
         let dirRoot = getPathURL(withPath: path)
         let newFilePath = trimPath(dir: path)
         let pathDir = dirRoot.appendingPathComponent(newFilePath)
-        print("GETFILE:",path,dirRoot, newFilePath, pathDir)
         return pathDir! as NSURL
     }
     
@@ -194,9 +193,10 @@ public class ShellSession {
         - dir: Directory that might be prefixed by the `~` character
      */
     func trimPath(dir: String) -> String {
-        let trimFile = dir.starts(with: "~/")
-            ? String(dir.dropFirst().dropFirst())
-            : dir
+        let trimFile = dir == "~" ? "" :
+            dir.starts(with: "~/")
+                ? String(dir.dropFirst().dropFirst())
+                : dir
         return trimFile
     }
 }

@@ -10,7 +10,7 @@ final class RmTests: BashInit {
             XCTAssertEqual(1, exit)
             
             let stderr = self.bash.session.stderr
-            XCTAssert(stderr.last?.stream.first?.starts(with: "rm") ?? false)
+            XCTAssert(stderr.last?.stream.first?.starts(with: "usage: rm") ?? false)
         }
     }
 }

@@ -143,7 +143,7 @@ final class BashTests: BashInit {
             XCTAssertEqual(1, exit)
             
             let stderr = self.bash.session.stderr
-            XCTAssert(stderr.last?.stream.first?.starts(with: "touch") ?? false)
+            XCTAssert(stderr.last?.stream.first?.starts(with: "usage: touch") ?? false)
         }
     }
     
@@ -160,7 +160,7 @@ final class BashTests: BashInit {
     func testPrompt() {
         let prompt = bash.session.prompt
         XCTAssertNotEqual(prompt, bash.session.storage.get()["PS1"])
-        XCTAssertEqual(prompt, "\(hostname):~ \(user)$")
+        XCTAssertEqual(prompt, "\(hostname):~ \(user)$ ")
         
         if (hostname != "hostname" && user != "user") {
             XCTAssertNotEqual(prompt, "hostname:~ user$")

@@ -12,7 +12,7 @@ class _command_rm: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "rm"
-        usage = "rm [-pv] [-m mode] directory ..."
+        usage = "usage: rm [-pv] [-m mode] directory ..."
     }
     
     override func execute(_ args: [String]) -> Int {

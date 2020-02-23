@@ -12,7 +12,7 @@ class _command_ls: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "ls"
-        usage = "ls [-a] [dir]"
+        usage = "usage: ls [-a] [dir]"
     }
     
     override func execute(_ args: [String]) -> Int {
@@ -31,12 +31,14 @@ class _command_ls: Command {
                 for a in 0...args.count-1 {
                     let name = String(try args.get(a))
                     if name != "-a" {
-                        let path = session.getPathURL(withPath: name)
-                        let complete = path.appendingPathComponent(name)!
-                        
-                        urls.append(DirectoryContent(url: complete, argument: name))
+                        let path = session.getFilePathURL(withFile: name)
+                        print("PathT2:", path)
+                        urls.append(DirectoryContent(url: path as URL, argument: name))
                     }
                 }
+            }
+            if urls.count == 0 {
+                urls.append(DirectoryContent(url: session.currentPath as URL, argument: ""))
             }
             
             for url in urls {

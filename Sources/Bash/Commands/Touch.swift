@@ -12,7 +12,7 @@ class _command_touch: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "touch"
-        usage = "touch [-A [-][[hh]mm]SS] [-acfhm] [-r file] [-t [[CC]YY]MMDDhhmm[.SS]] file ..."
+        usage = "usage: touch [-A [-][[hh]mm]SS] [-acfhm] [-r file] [-t [[CC]YY]MMDDhhmm[.SS]] file ..."
     }
     
     override func execute(_ args: [String]) -> Int {

@@ -40,8 +40,10 @@ public class Bash {
                 let arguments = Array(args[1..<args.endIndex])
                 let output = command.execute(arguments)
                 completion(output)
-            } else if args[0] == "" {
+            } else if args[0] == "" || args[0] == "clear" || args[0] == "exit" {
                 completion(0)
+            } else if args[0].contains("=") {
+                completion(_command_export(session).execute(args))
             } else {
                 self.session.stderr.appendOutput(127, ["-bash: \(command): command not found"], Command(session))
                 completion(127)

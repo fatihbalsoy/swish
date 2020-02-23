@@ -12,7 +12,7 @@ final class CdTests: BashInit {
             XCTAssertEqual(1, exit)
             
             let stderr = self.bash.session.stderr
-            XCTAssert(stderr.last?.stream.last?.starts(with: "cd") ?? false)
+            XCTAssert(stderr.last?.stream.last?.starts(with: "usage: cd") ?? false)
         }
     }
     

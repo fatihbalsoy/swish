@@ -12,7 +12,7 @@ class _command_cd: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "cd"
-        usage = "cd [-L|-P] [dir]"
+        usage = "usage: cd [-L|-P] [dir]"
     }
     
     override func execute(_ args: [String]) -> Int {
@@ -58,11 +58,6 @@ class _command_cd: Command {
                 }
             } else if dir == "~" {
                 session.currentPath = session.homePath
-            } else if dir.starts(with: "$") {
-                let removeChar = String(dir.dropFirst())
-                if let variable = session.storage.get()[removeChar] {
-                    forward(directory: variable)
-                }
             } else {
                 forward(directory: dir)
             }

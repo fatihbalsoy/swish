@@ -12,7 +12,7 @@ class _command_echo: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "echo"
-        usage = "echo [-neE] [arg ...]"
+        usage = "usage: echo [-neE] [arg ...]"
     }
     
     override func execute(_ args: [String]) -> Int {
