@@ -8,13 +8,13 @@
 import Foundation
 
 extension Array where Element == StandardStream {
-    mutating func appendOutput(_ exit: Int, _ output: [String], _ command: Command, _ error: Error? = nil) {
+    public mutating func appendOutput(_ exit: Int, _ output: [String], _ command: Command, _ error: Error? = nil) {
         print(exit, output)
         
         self.append(StandardStream(exitCode: exit, stream: output, error: error))
     }
     
-    mutating func appendError(_ exit: Int, _ error: NSError, _ args: [String], _ command: Command) {
+    public mutating func appendError(_ exit: Int, _ error: NSError, _ args: [String], _ command: Command) {
         let commandName = command.name
         let arguments = args.joined(separator: " ")
         self.appendOutput(exit, ["\(commandName): \(arguments): \(error.localizedFailureReason ?? error.localizedDescription)"], command)

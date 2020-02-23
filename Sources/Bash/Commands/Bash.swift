@@ -9,6 +9,7 @@ import Foundation
 
 public class Bash {
     public var session: ShellSession!
+    public var commands = [Command]()
     
     public required init(session: ShellSession) {
         self.session = session
@@ -97,7 +98,15 @@ public class Bash {
         Bash class deticated for the function
      */
     func find(command: String) -> Command? {
-        guard let cls: AnyClass = NSClassFromString("Bash._command_\(command)") else { return nil }
+        guard let cls: AnyClass = NSClassFromString("Bash._command_\(command)") else {
+            if let custom = commands.first(where: { (cmd) -> Bool in
+                return cmd.name == command
+            }) {
+                return type(of: custom).init(session)
+            } else {
+                return nil
+            }
+        }
         if let bashCommand = cls as? Command.Type {
             return bashCommand.init(session)
         }
@@ -130,6 +139,7 @@ public class Bash {
                 }
             }
         }
+        commandsList.append(contentsOf: commands)
         
         return commandsList
     }

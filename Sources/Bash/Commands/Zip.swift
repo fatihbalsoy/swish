@@ -103,8 +103,6 @@ class _command_unzip: Command {
                     }
                 }
                 
-                print("ziploc:",zip)
-                print("destinations:",urls)
                 try Zip.unzipFile(
                     zip as URL,
                     destination: urls.indices.contains(0) ? urls[0] : destination as URL,
