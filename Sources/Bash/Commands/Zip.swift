@@ -73,7 +73,7 @@ class _command_unzip: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "unzip"
-        usage = "usage: unzip [-Z] [-opts[modifiers]] file[.zip] [list] [-x xlist] [-d exdir]"
+        usage = "usage: unzip [-Z] [-p password] [-opts[modifiers]] file[.zip] [list] [-x xlist] [-d exdir]"
     }
     
     override func execute(_ args: [String]) -> Int {

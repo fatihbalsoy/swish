@@ -49,4 +49,54 @@ open class Command {
             -  255\* - Exit status out of range
      */
     open func execute(_ args: [String]) -> Int { return 0 }
+    
+     /**
+      Auto-completes the last argument, usually done by the tab key.
+      
+      - Parameters:
+         - args: The input given by the user when clicked on tab
+         - count: The amount of times the tab key was clicked
+      
+      - Returns:
+         - String that includes the hint at the end of the input
+      */
+    open func tab(_ args: [String], count: Int) -> String { return defaultTab(args, count: count) }
+    
+    open func defaultTab(_ args: [String], count: Int, pipe: String = "ls -a") -> String {
+        var toReturn = args.last ?? ""
+        
+        if let last = args.last {
+            /// Add grep and pipes to simplify this to:
+            /// ls | grep "^`last`"
+            Bash(session: session).execute(pipe, hidden: true) { (exit) in
+                if let files = self.session.stdout.last {
+
+                    var found = [String]()
+                    
+                    for file in files.stream {
+                        if file.starts(with: last) {
+                            found.append(file)
+                        }
+                    }
+                    if count > 1 && found.count > 1 {
+                        self.session.stdout.removeLast()
+                        self.session.stdout.appendOutput(0, found, self)
+                        Bash(session: self.session).tabCounts.removeValue(forKey: self.name)
+                    } else if found.count == 1 {
+                        let index = files.stream.first { (s) -> Bool in
+                            return s.starts(with: last)
+                        }
+                        toReturn = index ?? last
+                        self.session.stdout.removeLast()
+                    } else {
+                        self.session.stdout.removeLast()
+                    }
+                }
+            }
+        }
+        
+        var drop = args.dropLast()
+        drop.append(toReturn)
+        return name + " " + drop.joined(separator: " ")
+    }
 }

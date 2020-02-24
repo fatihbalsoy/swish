@@ -26,7 +26,11 @@ class _command_help: Command {
         var outputs = [String]()
         if let commands = Bash(session: session).findAllCommands() {
             for cmd in commands {
-                outputs.append(cmd.usage.replacingOccurrences(of: "usage: ", with: "\t"))
+                if args.contains("-n") {
+                    outputs.append(cmd.name)
+                } else {
+                    outputs.append(cmd.usage.replacingOccurrences(of: "usage: ", with: "\t"))
+                }
             }
             session.stdout.appendOutput(0, outputs, self)
             return 0
