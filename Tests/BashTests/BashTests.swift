@@ -15,7 +15,7 @@ class BashInit: XCTestCase {
         
         let developer = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
         
-        /// /Users/`USERNAME`/Developer/Applications/BashSwift/XCTestRoot
+        /// /Users/`USERNAME`/Library/BashSwift/XCTestRoot
         let rootURL = developer.appendingPathComponent("BashSwift/\(root)") as NSURL?
         
         Shell(root: rootURL).session(user: user, hostname: hostname, uuid: _kUUID) { (exists, session) in

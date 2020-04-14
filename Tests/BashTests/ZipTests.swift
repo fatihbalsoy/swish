@@ -54,6 +54,7 @@ final class ZipTests: BashInit {
     }
     
     func testResetDirectories() {
+        bash.execute("mkdir \(dir)") { (exit) in }
         bash.execute("rm -rf \(dir)") { (exit) in
             XCTAssertEqual(exit, 0)
         }
