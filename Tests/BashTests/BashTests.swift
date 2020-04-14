@@ -131,10 +131,10 @@ final class BashTests: BashInit {
         }
         
         /// Unexpectedly crashed
-        bash.execute("") { (exit) in
-            let stderr = self.bash.session.stderr
-            XCTAssertEqual(stderr.last?.exitCode, exit) // 128
-        }
+//        bash.execute("") { (exit) in
+//            let stderr = self.bash.session.stderr
+//            XCTAssertEqual(stderr.last?.exitCode, exit) // 128
+//        }
     }
     
     // MARK: - Command Protocol

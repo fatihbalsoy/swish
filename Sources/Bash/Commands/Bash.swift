@@ -143,31 +143,42 @@ public class Bash {
     }
     
     /**
-     Finds and returns a list of all bash commands available
+     Finds and returns an alphabetically sorted list of all bash commands available
+     
+     April 14, 2020: Updated for Xcode 11.4, iOS 13.4, and macOS 10.15.4
+     
+     `https://stackoverflow.com/questions/60853427/objc-copyclasslist-crash-exc-bad-instruction-after-update-to-ios-13-4-xcode-1`
      
      - Returns
         List of classes available to use with bash in the project
      */
     func findAllCommands() -> [Command]? {
-        let commandClassInfo = ClassInfo(Command.self)!
-        var subclassList = [ClassInfo]()
+        let commandClassInfo = ClassInfo(Command.self)
         var commandsList = [Command]()
 
         var count = UInt32(0)
-        let classList = objc_copyClassList(&count)!
-
-        for i in 0..<Int(count) {
-            if let classInfo = ClassInfo(classList[i]),
-                let superclassInfo = classInfo.superclassInfo,
-                superclassInfo == commandClassInfo
-            {
-                subclassList.append(classInfo)
+        guard let classListPointer = objc_copyClassList(&count) else { return [] }
+        let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
+            .map(ClassInfo.init)
+            .filter { $0?.superclassInfo == commandClassInfo }
+        
+        let sortedClassList = classList.sorted { (aX, bX) -> Bool in
+            guard let a = aX?.classObject as? Command.Type else { return false }
+            guard let b = bX?.classObject as? Command.Type else { return false }
             
+            let aCMD = a.init(self.session)
+            let bCMD = b.init(self.session)
+            return aCMD.name < bCMD.name
+        }
+
+        for i in 0..<Int(sortedClassList.count) {
+            if let classInfo = sortedClassList[i] {
                 if let bashCommand = classInfo.classObject as? Command.Type {
-                    commandsList.append(bashCommand.init(session))
+                    commandsList.append(bashCommand.init(self.session))
                 }
             }
         }
+        
         commandsList.append(contentsOf: commands)
         
         return commandsList
