@@ -14,18 +14,18 @@ public class BashStorage {
         variables["RANDOM"] = String(Int.random(in: 0 ..< 32767))
         return variables
     }
-    func set(from: [String:String]) {
+    public func set(from: [String:String]) {
         for set in from {
             variables[set.key] = set.value
         }
     }
-    func set(_ value: String, for key: String) {
+    public func set(_ value: String, for key: String) {
         variables[key] = value
     }
-    func removeAll() {
+    public func removeAll() {
         variables.removeAll()
     }
-    func removeValue(forKey: String) {
+    public func removeValue(forKey: String) {
         variables.removeValue(forKey: forKey)
     }
 }
