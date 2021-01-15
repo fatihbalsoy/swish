@@ -8,7 +8,6 @@
 import Foundation
 
 // FIXME: Issues
-// - Replaces folders with text docs
 // - Cant move a list of files at once
 class _command_cp: Command {
     
@@ -51,8 +50,7 @@ class _command_cp: Command {
             
             let fileManager = FileManager.default
             var isSrcDir : ObjCBool = false
-            var isDstDir : ObjCBool = false
-            _ = fileManager.fileExists(atPath: destinationPath.path ?? "", isDirectory:&isDstDir)
+            
             if fileManager.fileExists(atPath: sourcePath.path ?? "", isDirectory:&isSrcDir) {
                 if isSrcDir.boolValue && !copyFolders {
                     return sendError("\(source) is a directory (not copied).", a: [""])
@@ -61,7 +59,14 @@ class _command_cp: Command {
                 return sendError("No such file or directory", a: [source])
             }
             
-            if fileManager.fileExists(atPath: destinationPath.path ?? "") {
+            var isDstDir : ObjCBool = false
+            if fileManager.fileExists(atPath: destinationPath.path ?? "", isDirectory:&isDstDir) {
+                if isDstDir.boolValue && !isSrcDir.boolValue {
+                    let sourceFile = sourcePath.lastPathComponent ?? ""
+                    let input = args.joined(separator: " ") + "/" + sourceFile
+                    Bash(session: session).execute("cp \(input)", hidden: true) { (exit) in }
+                    return 0
+                }
                 if overwrite {
                     try fileManager.removeItem(atPath: destinationPath.path ?? "")
                 } else {

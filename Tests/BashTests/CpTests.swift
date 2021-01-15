@@ -3,7 +3,7 @@ import XCTest
 
 final class CpTests: BashInit {
     let dir = "/tmp/xctest/cp"
-    let dir2 = "folder"
+    let folder = "folder"
     let file = "TestFileCreation.txt"
     let file2 = "TestFileCreation2.txt"
     
@@ -41,6 +41,44 @@ final class CpTests: BashInit {
             let containsSecondary = stdout?.stream.contains(self.file2) ?? false
             
             XCTAssertTrue(containsSecondary)
+            XCTAssertEqual(exit, 0)
+        }
+    }
+    
+    func testFolderCopy() {
+        bash.execute("mkdir \(dir)/\(folder)") { (exit) in
+            XCTAssertEqual(exit, 0)
+        }
+        bash.execute("touch \(dir)/\(folder)/\(file)") { (exit) in
+            XCTAssertEqual(exit, 0)
+        }
+        bash.execute("cp \(dir)/\(folder) \(dir)/\(folder)2 -R") { (exit) in
+            XCTAssertEqual(exit, 0)
+        }
+        bash.execute("ls \(dir)/\(folder)2") { (exit) in
+            let stdout = self.bash.session.stdout.last
+            let containsPrimary = stdout?.stream.contains(self.file) ?? false
+            
+            XCTAssertTrue(containsPrimary)
+            XCTAssertEqual(exit, 0)
+        }
+    }
+    
+    func testFileToFolderCopy() {
+        bash.execute("mkdir \(dir)/file2\(folder)") { (exit) in
+            XCTAssertEqual(exit, 0)
+        }
+        bash.execute("touch \(dir)/\(file)") { (exit) in
+            XCTAssertEqual(exit, 0)
+        }
+        bash.execute("cp \(dir)/\(file) \(dir)/file2\(folder)") { (exit) in
+            XCTAssertEqual(exit, 0)
+        }
+        bash.execute("ls \(dir)/file2\(folder)") { (exit) in
+            let stdout = self.bash.session.stdout.last
+            let containsPrimary = stdout?.stream.contains(self.file) ?? false
+            
+            XCTAssertTrue(containsPrimary)
             XCTAssertEqual(exit, 0)
         }
     }
