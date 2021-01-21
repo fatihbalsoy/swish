@@ -8,6 +8,7 @@
 import Foundation
 
 // FIXME: Issues
+// - Copying into folders needs -R and -n
 // - Cant move a list of files at once
 class _command_cp: Command {
     
@@ -62,6 +63,7 @@ class _command_cp: Command {
             var isDstDir : ObjCBool = false
             if fileManager.fileExists(atPath: destinationPath.path ?? "", isDirectory:&isDstDir) {
                 if isDstDir.boolValue && !isSrcDir.boolValue {
+                    // FIXME: Needs -R and -n
                     let sourceFile = sourcePath.lastPathComponent ?? ""
                     let input = args.joined(separator: " ") + "/" + sourceFile
                     Bash(session: session).execute("cp \(input)", hidden: true) { (exit) in }
