@@ -62,6 +62,7 @@ open class Command {
       */
     open func tab(_ args: [String], count: Int) -> String { return defaultTab(args, count: count) }
     
+    // FIXME: Doesn't work with files out of scope, ex: cd /home/compl *tab*
     open func defaultTab(_ args: [String], count: Int, pipe: String = "ls -a") -> String {
         var toReturn = args.last ?? ""
         
