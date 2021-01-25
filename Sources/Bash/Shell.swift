@@ -30,7 +30,7 @@ public class Shell {
      Creates a new shell session and returns it when complete.
      If it already exists, the function just returns the session and skips creating it.
      */
-    public func session (user: String = "user", hostname: String = "hostname", uuid: String = UUID().uuidString, completion: @escaping (_ exists: Bool, _ session: ShellSession) -> Void) {
+    public func session(user: String = "user", hostname: String = "hostname", uuid: String = UUID().uuidString, completion: @escaping (_ exists: Bool, _ session: ShellSession) -> Void) {
         
         if Shell.mainSession == nil { Shell.mainSession = uuid }
         
