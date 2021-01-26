@@ -76,7 +76,7 @@ class _command_uname: Command {
 
     var deviceName: String {
         get {
-            return UIDevice.current.name
+            return ProcessInfo().hostName
         }
     }
     
