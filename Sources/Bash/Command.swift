@@ -65,11 +65,25 @@ open class Command {
     // FIXME: Doesn't work with files out of scope, ex: cd /home/compl *tab*
     open func defaultTab(_ args: [String], count: Int, pipe: String = "ls -a") -> String {
         var toReturn = args.last ?? ""
+        var parent = ""
         
-        if let last = args.last {
+        if let l = args.last {
+            var defaultPipe = pipe
+            var last = l
+            
+            if pipe == "ls -a" && last.last != "/" {
+                var split = last.components(separatedBy: "/")
+                last = split.removeLast()
+                if split.joined() != "" {
+                    parent = split.joined(separator: "/") + "/"
+                    defaultPipe = pipe + " " + parent
+                    print(split, "->",defaultPipe)
+                }
+            }
+            
             /// Add grep and pipes to simplify this to:
             /// ls | grep "^`last`"
-            Bash(session: session).execute(pipe, hidden: true) { (exit) in
+            Bash(session: session).execute(defaultPipe, hidden: true) { (exit) in
                 if let files = self.session.stdout.last {
 
                     var found = [String]()
@@ -88,6 +102,15 @@ open class Command {
                             return s.starts(with: last)
                         }
                         toReturn = index ?? last
+                        
+                        var isDir: ObjCBool = false
+                        if let path = self.session.getFilePathURL(withFile: parent + toReturn).absoluteURL?.path {
+                            let d = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
+                            if isDir.boolValue {
+                                toReturn += "/"
+                            }
+                        }
+                        
                         self.session.stdout.removeLast()
                     } else {
                         self.session.stdout.removeLast()
@@ -98,6 +121,6 @@ open class Command {
         
         var drop = args.dropLast()
         drop.append(toReturn)
-        return name + " " + drop.joined(separator: " ")
+        return name + " " + parent + drop.joined(separator: " ")
     }
 }

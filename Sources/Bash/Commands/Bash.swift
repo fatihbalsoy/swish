@@ -119,7 +119,6 @@ public class Bash {
             } else {
                 tabCounts[command] = 1
             }
-            print(tabCounts)
             
             if let commandClass = self.find(command: command) {
                 let arguments = Array(args[1..<args.endIndex])

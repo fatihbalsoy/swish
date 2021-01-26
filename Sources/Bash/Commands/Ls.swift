@@ -54,7 +54,10 @@ class _command_ls: Command {
                     }
                 }
             }
-            session.stdout.appendOutput(0, outputs, self)
+            let sorted = outputs.sorted { (a, b) -> Bool in
+                return a < b
+            }
+            session.stdout.appendOutput(0, sorted, self)
             return 0
         } catch let error as NSError {
             print(error.debugDescription)

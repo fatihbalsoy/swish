@@ -19,15 +19,33 @@ class _command_export: Command {
         do {
             _ = try args.get(0)
             
-            for a in 0...args.count-1 {
-                if args.indices.contains(a) && args[a].contains("=") {
-                    let split = args[a].split(maxSplits: 1, omittingEmptySubsequences: true) { (char) -> Bool in
+            // Concept
+            // $ a=b c=d
+            // a=b
+            // c=d
+            // $ a=hello world
+            // a=hello world
+            
+            // TODO:
+            // $ a=b c d=e
+            // c: command not found
+            
+            // MARK: - Multiple Exports
+            var lastExport = ""
+            for a in args {
+                if a.contains("=") {
+                    let split = a.split(maxSplits: 1, omittingEmptySubsequences: true) { (char) -> Bool in
                         return char == "="
                     }
                     if split.indices.contains(1) {
                         if split[1] != "" {
+                            lastExport = String(split[0])
                             session.storage.set(String(split[1]), for: String(split[0]))
                         }
+                    }
+                } else {
+                    if let lastVar = session.storage.get()[lastExport] {
+                        session.storage.set(lastVar + " " + a, for: lastExport)
                     }
                 }
             }
