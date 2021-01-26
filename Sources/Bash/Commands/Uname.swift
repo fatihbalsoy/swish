@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 // FIXME: Maybe ask for config when initializing shell to get accurate info
 class _command_uname: Command {
