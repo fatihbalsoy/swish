@@ -12,7 +12,7 @@ class _command_ls: Command {
     required init(_ session: ShellSession) {
         super.init(session)
         name = "ls"
-        usage = "usage: ls [-a] [dir]"
+        usage = "usage: ls [-a1] [dir]"
     }
     
     override func execute(_ args: [String]) -> Int {

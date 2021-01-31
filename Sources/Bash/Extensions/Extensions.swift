@@ -54,6 +54,37 @@ extension String {
         return self.range(of: regex, options: .regularExpression, range: nil, locale: nil) != nil
     }
     
+    //
+    //  MARK: - StringPadding.swift
+    //
+    //  Created by Zac Hallett on 12/8/14.
+    //  Copyright (c) 2014 ID.me. All rights reserved.
+    //
+    func padding(fieldLength: Int) -> String {
+        var formatedString: String = ""
+        formatedString += self
+        
+        for _ in 1...(fieldLength - self.count) {
+            formatedString += " "
+        }
+        
+        return formatedString
+    }
+    
+    //
+    //  Created by Zac Hallett on 12/8/14.
+    //  Copyright (c) 2014 ID.me. All rights reserved.
+    //
+    func padding(fieldLength: Int, paddingChar: String) -> String {
+        var formatedString: String = ""
+        formatedString += self
+        
+        for _ in 1...(fieldLength - self.count) {
+            formatedString += paddingChar
+        }
+        
+        return formatedString
+    }
 }
 
 extension Date {

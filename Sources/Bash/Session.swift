@@ -19,7 +19,21 @@ public struct StandardStream {
     }
 }
 
-public class ShellSession {
+enum ShellSessionState {
+    case input
+    case running
+}
+
+@objc public protocol ShellSessionDelegate: AnyObject {
+    /// Triggered an output was added to stdout or srderr.
+    @objc optional func terminal(didUpdateOutput session: ShellSession)
+    /// Triggered when the CLEAR command is executed.
+    @objc optional func terminal(didClearOutput session: ShellSession)
+    /// Triggered when the EXIT or BYE command is executed.
+    @objc optional func terminal(didExit session: ShellSession)
+}
+
+public class ShellSession: NSObject {
     
     /// Standard input is a stream from which a program reads its input data.
     public var stdin = [StandardStream]()
@@ -42,6 +56,9 @@ public class ShellSession {
     var homePath: NSURL
     /// The current path the session is operating in
     var currentPath: NSURL
+    
+    /// Delegate method of session
+    public weak var delegate: ShellSessionDelegate?
     
     /**
      Prompt displayed before the user input field
