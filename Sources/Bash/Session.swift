@@ -179,7 +179,7 @@ public class ShellSession: NSObject {
          - ~/example → /home/user/
          - example → /home/user/Documents/
      */
-    func getPathURL(withPath path: String) -> NSURL {
+    public func getPathURL(withPath path: String) -> NSURL {
         let dirRoot = solveDirectoryRoot(path: path)
         let pathDir = dirRoot == .home ? homePath : dirRoot == .root ? rootPath : currentPath
         return pathDir
@@ -196,7 +196,7 @@ public class ShellSession: NSObject {
          - ~/example → /home/user/example
          - example → /home/user/Documents/example
      */
-    func getFilePathURL(withFile path: String) -> NSURL {
+    public func getFilePathURL(withFile path: String) -> NSURL {
         let dirRoot = getPathURL(withPath: path)
         let newFilePath = trimPath(dir: path)
         let pathDir = dirRoot.appendingPathComponent(newFilePath)
