@@ -15,10 +15,10 @@ open class Command {
     }
     
     /**
-     The string that executes the command from bash
+     The string that executes the command from swish
      
      Examples:
-        - bash
+        - swish
         - touch
         - cd
         - echo
@@ -33,7 +33,7 @@ open class Command {
     /**
         - Parameters:
             - args: The input given by the user
-            - completion: Run code after bash command is complete
+            - completion: Run code after swish command is complete
             - exit: Exit code returned when execution is complete
      
         - Returns:
@@ -83,7 +83,7 @@ open class Command {
             
             /// Add grep and pipes to simplify this to:
             /// ls | grep "^`last`"
-            Bash(session: session).execute(defaultPipe, hidden: true) { (exit) in
+            Swish(session: session).execute(defaultPipe, hidden: true) { (exit) in
                 if let files = self.session.stdout.last {
 
                     var found = [String]()
@@ -96,7 +96,7 @@ open class Command {
                     if count > 1 && found.count > 1 {
                         self.session.stdout.removeLast()
                         self.session.stdout.appendOutput(0, found, self)
-                        Bash(session: self.session).tabCounts.removeValue(forKey: self.name)
+                        Swish(session: self.session).tabCounts.removeValue(forKey: self.name)
                     } else if found.count == 1 {
                         let index = files.stream.first { (s) -> Bool in
                             return s.starts(with: last)

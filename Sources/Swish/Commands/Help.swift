@@ -17,14 +17,14 @@ class _command_help: Command {
     
     override func execute(_ args: [String]) -> Int {
         if args.indices.contains(0) {
-            if let command = Bash(session: session).find(command: args[0]) {
+            if let command = Swish(session: session).find(command: args[0]) {
                 session.stdout.appendOutput(0, [command.usage], self)
                 return 0
             }
         }
         
         var outputs = [String]()
-        if let commands = Bash(session: session).findAllCommands() {
+        if let commands = Swish(session: session).findAllCommands() {
             for cmd in commands {
                 if args.contains("-n") {
                     outputs.append(cmd.name)

@@ -1,7 +1,7 @@
 import XCTest
 
-import BashTests
+import SwishTests
 
 var tests = [XCTestCaseEntry]()
-tests += BashTests.allTests()
+tests += SwishTests.allTests()
 XCTMain(tests)

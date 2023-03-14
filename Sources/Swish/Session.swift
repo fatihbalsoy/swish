@@ -97,7 +97,7 @@ public class ShellSession: NSObject {
     public var prompt: String {
         get {
             let lineStorage = [
-                "\\h": storage.get()["HOSTNAME"] ?? "bash",
+                "\\h": storage.get()["HOSTNAME"] ?? "swish",
                 "\\W": currentPath == homePath ? "~" : currentPath.pathComponents?.last ?? "~",
                 "\\u": storage.get()["USER"] ?? "user",
                 "\\$": "$"
@@ -112,7 +112,7 @@ public class ShellSession: NSObject {
         
         let home = "/home/\(user)"
         storage.set(from: [
-            "0": "-bash",
+            "0": "-swish",
             "PS1": "\\h:\\W \\u\\$",
             "PS2": ">",
             "PS4": "+",

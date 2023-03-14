@@ -1,15 +1,15 @@
 import XCTest
-@testable import Bash
+@testable import Swish
 
-final class RmTests: BashInit {    
+final class RmTests: SwishInit {    
     func testCommandUsage() {
-        bash.execute("rm nonexistent_folder/xctest") { (exit) in
+        swish.execute("rm nonexistent_folder/xctest") { (exit) in
             XCTAssertEqual(1, exit)
         }
-        bash.execute("rm") { (exit) in
+        swish.execute("rm") { (exit) in
             XCTAssertEqual(1, exit)
             
-            let stderr = self.bash.session.stderr
+            let stderr = self.swish.session.stderr
             XCTAssert(stderr.last?.stream.first?.starts(with: "usage: rm") ?? false)
         }
     }

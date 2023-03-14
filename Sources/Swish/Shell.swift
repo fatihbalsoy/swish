@@ -22,7 +22,7 @@ public class Shell {
     public static let documentsURL = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     
     public init(root: NSURL? = nil) {
-        let safeguard = Shell.documentsURL.appendingPathComponent("BashSwift/root")
+        let safeguard = Shell.documentsURL.appendingPathComponent("SwiftShell/root")
         self.root = root ?? safeguard! as NSURL
     }
     

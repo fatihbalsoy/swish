@@ -1,5 +1,5 @@
 //
-//  Bash.swift
+//  Swish.swift
 //  
 //
 //  Created by Fatih Balsoy on 2/18/20.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Bash {
+public class Swish {
     public var session: ShellSession!
     public var commands = [Command]()
     var tabCounts = [String : Int]()
@@ -21,7 +21,7 @@ public class Bash {
         - Parameters:
             - input: The input given by the user
             - hidden: Hide output from history
-            - completion: Run code after bash command is complete
+            - completion: Run code after swish command is complete
             - exit: Exit code returned when execution is complete
      
         - Returns:
@@ -53,14 +53,14 @@ public class Bash {
             } else if args[0].contains("=") {
                 completion(_command_export(session).execute(args))
             } else {
-                self.session.stderr.appendOutput(127, ["-bash: \(commandName): command not found"], Command(session))
+                self.session.stderr.appendOutput(127, ["-swish: \(commandName): command not found"], Command(session))
                 completion(127)
             }
         } catch let error as NSError {
             if error.domain == "array.get" {
                 if error.code == 404 {
                     if error.userInfo["index"] as? Int == 0 {
-                        session.stderr.appendOutput(0, ["-bash: 0: command not found"], Command(session), error)
+                        session.stderr.appendOutput(0, ["-swish: 0: command not found"], Command(session), error)
                         completion(0)
                     }
                 }
@@ -143,16 +143,16 @@ public class Bash {
     
     
     /**
-     Finds and returns the bash command being executed
+     Finds and returns the swish command being executed
      
      - Parameters:
-        - command: String that is used to find the class for the bash command
+        - command: String that is used to find the class for the swish command
      
      - Returns
-        Bash class deticated for the function
+        Swish class deticated for the function
      */
     func find(command: String) -> Command? {
-        guard let cls: AnyClass = NSClassFromString("Bash._command_\(command)") else {
+        guard let cls: AnyClass = NSClassFromString("Swish._command_\(command)") else {
             if let custom = commands.first(where: { (cmd) -> Bool in
                 return cmd.name == command
             }) {
@@ -168,14 +168,14 @@ public class Bash {
     }
     
     /**
-     Finds and returns an alphabetically sorted list of all bash commands available
+     Finds and returns an alphabetically sorted list of all swish commands available
      
      April 14, 2020: Updated for Xcode 11.4, iOS 13.4, and macOS 10.15.4
      
      `https://stackoverflow.com/questions/60853427/objc-copyclasslist-crash-exc-bad-instruction-after-update-to-ios-13-4-xcode-1`
      
      - Returns
-        List of classes available to use with bash in the project
+        List of classes available to use with swish in the project
      */
     func findAllCommands() -> [Command]? {
         let commandClassInfo = ClassInfo(Command.self)

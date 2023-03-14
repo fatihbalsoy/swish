@@ -1,33 +1,33 @@
 import XCTest
-@testable import Bash
+@testable import Swish
 
-final class ZipTests: BashInit {
+final class ZipTests: SwishInit {
     let dir = "/tmp/xctest/zip"
     let zip = "xctest.zip"
     
     func testCommandUsage() {
-        bash.execute("zip notzip.txt") { (exit) in
+        swish.execute("zip notzip.txt") { (exit) in
             XCTAssertEqual(1, exit)
         }
-        bash.execute("zip iszip.zip") { (exit) in
+        swish.execute("zip iszip.zip") { (exit) in
             XCTAssertEqual(1, exit)
         }
-        bash.execute("zip") { (exit) in
+        swish.execute("zip") { (exit) in
             XCTAssertEqual(1, exit)
             
-            let stderr = self.bash.session.stderr
+            let stderr = self.swish.session.stderr
             XCTAssert(stderr.last?.stream.first?.starts(with: "usage: zip") ?? false)
         }
     }
     
     func testZipFiles() {
-        bash.execute("mkdir \(dir)") { (exit) in }
-        bash.execute("touch \(dir)/file1.txt \(dir)/file2.rtf") { (exit) in }
-        bash.execute("zip \(dir)/\(zip) \(dir)/file1.txt \(dir)/file2.rtf") { (exit) in
+        swish.execute("mkdir \(dir)") { (exit) in }
+        swish.execute("touch \(dir)/file1.txt \(dir)/file2.rtf") { (exit) in }
+        swish.execute("zip \(dir)/\(zip) \(dir)/file1.txt \(dir)/file2.rtf") { (exit) in
             XCTAssertEqual(exit, 0)
         }
-        bash.execute("ls \(dir)") { (exit) in
-            let containsZip = self.bash.session.stdout.contains { (stream) -> Bool in
+        swish.execute("ls \(dir)") { (exit) in
+            let containsZip = self.swish.session.stdout.contains { (stream) -> Bool in
                 return stream.stream.contains(where: { (s) -> Bool in
                     return s == self.zip
                 })
@@ -37,13 +37,13 @@ final class ZipTests: BashInit {
     }
     
     func unzip(){
-        bash.execute("ls \(dir)") { (exit) in
-            let containsOne = self.bash.session.stdout.contains { (stream) -> Bool in
+        swish.execute("ls \(dir)") { (exit) in
+            let containsOne = self.swish.session.stdout.contains { (stream) -> Bool in
                 return stream.stream.contains(where: { (s) -> Bool in
                     return s == "\(self.dir)/file1.txt"
                 })
             }
-            let containsTwo = self.bash.session.stdout.contains { (stream) -> Bool in
+            let containsTwo = self.swish.session.stdout.contains { (stream) -> Bool in
                 return stream.stream.contains(where: { (s) -> Bool in
                     return s == "\(self.dir)/file2.rtf"
                 })
@@ -54,8 +54,8 @@ final class ZipTests: BashInit {
     }
     
     func testResetDirectories() {
-        bash.execute("mkdir \(dir)") { (exit) in }
-        bash.execute("rm -rf \(dir)") { (exit) in
+        swish.execute("mkdir \(dir)") { (exit) in }
+        swish.execute("rm -rf \(dir)") { (exit) in
             XCTAssertEqual(exit, 0)
         }
     }

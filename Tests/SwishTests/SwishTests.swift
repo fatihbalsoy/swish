@@ -1,9 +1,9 @@
 import XCTest
-@testable import Bash
+@testable import Swish
 
 let _kUUID: String = UUID().uuidString
-class BashInit: XCTestCase {
-    var bash: Bash!
+class SwishInit: XCTestCase {
+    var swish: Swish!
     
     let root = "XCTestRoot"
     let hostname = "XCTest"
@@ -15,8 +15,8 @@ class BashInit: XCTestCase {
         
         let developer = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
         
-        /// /Users/`USERNAME`/Library/BashSwift/XCTestRoot
-        let rootURL = developer.appendingPathComponent("BashSwift/\(root)") as NSURL?
+        /// /Users/`USERNAME`/Library/SwiftShell/XCTestRoot
+        let rootURL = developer.appendingPathComponent("SwiftShell/\(root)") as NSURL?
         
         Shell(root: rootURL).session(user: user, hostname: hostname, uuid: _kUUID) { (exists, session) in
             print(_kUUID)
@@ -40,17 +40,17 @@ class BashInit: XCTestCase {
             print("")
             print("")
             
-            self.bash = Bash(session: session)
+            self.swish = Swish(session: session)
         }
         
         print("sessions:",Shell.sessions)
-        self.bash.execute("cd ~") { (exit) in
+        self.swish.execute("cd ~") { (exit) in
             XCTAssertEqual(0, exit)
         }
         
-//        bash.execute("rm -rf tmp home") { (exit) in }
-//        bash.execute("ls") { (exit) in
-//            let contains = self.bash.session.stdout.contains { (stream) -> Bool in
+//        swish.execute("rm -rf tmp home") { (exit) in }
+//        swish.execute("ls") { (exit) in
+//            let contains = self.swish.session.stdout.contains { (stream) -> Bool in
 //                return stream.stream == "home" || stream.stream == "tmp"
 //            }
 //            XCTAssertFalse(contains)
@@ -58,38 +58,38 @@ class BashInit: XCTestCase {
     }
 }
 
-final class BashTests: BashInit {
+final class SwishTests: SwishInit {
     
     // MARK: - Indexing
     func testFindFunction() {        
         /// Command exists
-        if let _ = bash.find(command: "touch") {
+        if let _ = swish.find(command: "touch") {
             XCTAssert(true)
         } else {
             XCTAssert(false)
         }
         
         /// Command exists and had no problems
-        bash.execute("echo hi") { (exit) in
+        swish.execute("echo hi") { (exit) in
             XCTAssertEqual(0, exit)
         }
         
         /// Command does not exist
-        bash.execute("nonexistent") { (exit) in
+        swish.execute("nonexistent") { (exit) in
             XCTAssertEqual(127, exit)
         }
         
         /// Empty arguments
-        bash.execute("    ") { (exit) in
+        swish.execute("    ") { (exit) in
             XCTAssertEqual(0, exit)
         }
     }
     
     func testCommandIndexing() {
-        if let index = bash.findAllCommands() {
+        if let index = swish.findAllCommands() {
             print("\nIndexing commands:")
             for command in index {
-                let className = String(describing: command.self).replacingOccurrences(of: "Bash._command_", with: "")
+                let className = String(describing: command.self).replacingOccurrences(of: "Swish._command_", with: "")
                 if command.name == className {
                     let usage = command.usage.split(separator: " ").dropFirst().joined(separator: " ")
                     print("   🟢  \(command.name) \(usage)")
@@ -108,16 +108,16 @@ final class BashTests: BashInit {
     
     // MARK: - Standard Streams
     func testStandardOutput() {
-        bash.execute("echo hello world i am a computer") { (exit) in
-            let stdout = self.bash.session.stdout
+        swish.execute("echo hello world i am a computer") { (exit) in
+            let stdout = self.swish.session.stdout
             XCTAssertEqual(stdout.last?.stream.first, "hello world i am a computer")
             XCTAssertEqual(stdout.last?.exitCode, exit) // 0
         }
     }
     
     func testStandardInput() {
-        bash.execute("echo hello world this is another test!") { (exit) in
-            let stdin = self.bash.session.stdin
+        swish.execute("echo hello world this is another test!") { (exit) in
+            let stdin = self.swish.session.stdin
             XCTAssertEqual(stdin.last?.stream.first, "echo hello world this is another test!")
             XCTAssertEqual(stdin.last?.exitCode, exit) // 0
         }
@@ -125,30 +125,30 @@ final class BashTests: BashInit {
     
     func testStandardError() {
         /// Command does not exist
-        bash.execute("nonexistent") { (exit) in
-            let stderr = self.bash.session.stderr
+        swish.execute("nonexistent") { (exit) in
+            let stderr = self.swish.session.stderr
             XCTAssertEqual(stderr.last?.exitCode, exit) // 127
         }
         
         /// Unexpectedly crashed
-//        bash.execute("") { (exit) in
-//            let stderr = self.bash.session.stderr
+//        swish.execute("") { (exit) in
+//            let stderr = self.swish.session.stderr
 //            XCTAssertEqual(stderr.last?.exitCode, exit) // 128
 //        }
     }
     
     // MARK: - Command Protocol
     func testCommandUsage() {
-        bash.execute("touch") { (exit) in
+        swish.execute("touch") { (exit) in
             XCTAssertEqual(1, exit)
             
-            let stderr = self.bash.session.stderr
+            let stderr = self.swish.session.stderr
             XCTAssert(stderr.last?.stream.first?.starts(with: "usage: touch") ?? false)
         }
     }
     
     func testCommandProtocol() {
-        if let index = bash.findAllCommands() {
+        if let index = swish.findAllCommands() {
             for command in index {
                 XCTAssertNotEqual(command.name, "")
                 XCTAssertNotEqual(command.usage, "")
@@ -158,8 +158,8 @@ final class BashTests: BashInit {
     
     // MARK: - Prompt
     func testPrompt() {
-        let prompt = bash.session.prompt
-        XCTAssertNotEqual(prompt, bash.session.storage.get()["PS1"])
+        let prompt = swish.session.prompt
+        XCTAssertNotEqual(prompt, swish.session.storage.get()["PS1"])
         XCTAssertEqual(prompt, "\(hostname):~ \(user)$ ")
         
         if (hostname != "hostname" && user != "user") {
@@ -169,46 +169,46 @@ final class BashTests: BashInit {
     
     // MARK: - Syncronization
     func testSyncronization() {
-        bash.session.storage.set(_kUUID, for: "SYNC")
+        swish.session.storage.set(_kUUID, for: "SYNC")
         Shell().session(uuid: _kUUID) { (exists, session) in
-            XCTAssertEqual(session.storage.get()["SYNC"], self.bash.session.storage.get()["SYNC"])
+            XCTAssertEqual(session.storage.get()["SYNC"], self.swish.session.storage.get()["SYNC"])
         }
     }
     
     // MARK: - Variables
     func testRandomVariable() {
-        let rand1 = bash.session.storage.get()["RANDOM"]
-        let rand2 = bash.session.storage.get()["RANDOM"]
+        let rand1 = swish.session.storage.get()["RANDOM"]
+        let rand2 = swish.session.storage.get()["RANDOM"]
         
         XCTAssertNotEqual(rand1, rand2)
     }
     func testSetGetVariables() {
         let set = "Testing"
-        bash.session.storage.set(set, for: "XCTEST")
+        swish.session.storage.set(set, for: "XCTEST")
         
-        let get = bash.session.storage.get()["XCTEST"]
+        let get = swish.session.storage.get()["XCTEST"]
         XCTAssertEqual(set, get)
     }
     func testRemoveVariables() {
-        bash.session.storage.removeValue(forKey: "XCTEST")
-        let get = bash.session.storage.get()["XCTEST"]
+        swish.session.storage.removeValue(forKey: "XCTEST")
+        let get = swish.session.storage.get()["XCTEST"]
         XCTAssertEqual(get, nil)
     }
     func testRemoveAllVariables() {
-        let storage = bash.session.storage.get()
-        bash.session.storage.removeAll()
-        XCTAssertLessThan(bash.session.storage.get().count, storage.count)
+        let storage = swish.session.storage.get()
+        swish.session.storage.removeAll()
+        XCTAssertLessThan(swish.session.storage.get().count, storage.count)
         
-        bash.session.storage.set(from: storage)
-        XCTAssertEqual(bash.session.storage.get().count, storage.count)
+        swish.session.storage.set(from: storage)
+        XCTAssertEqual(swish.session.storage.get().count, storage.count)
     }
     func testAppendListOfVariables() {
         let custom = [
             "XCTEST_APPEND": "Test1",
             "XCTEST_OBJECT": "Test2"
         ]
-        bash.session.storage.set(from: custom)
-        let get = bash.session.storage.get()
+        swish.session.storage.set(from: custom)
+        let get = swish.session.storage.get()
         
         XCTAssertEqual(get["XCTEST_APPEND"], "Test1")
         XCTAssertEqual(get["XCTEST_OBJECT"], "Test2")

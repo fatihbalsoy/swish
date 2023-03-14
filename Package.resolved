@@ -5,18 +5,18 @@
         "package": "MathParser",
         "repositoryURL": "https://github.com/davedelong/DDMathParser.git",
         "state": {
-          "branch": "master",
-          "revision": "6f5bd1281216200dfb96998836fcb35ef7cd024e",
-          "version": null
+          "branch": null,
+          "revision": "0a159109e2393c3e1db4e2b638009c82e6650b4d",
+          "version": "3.1.0"
         }
       },
       {
         "package": "Zip",
         "repositoryURL": "https://github.com/marmelroy/Zip.git",
         "state": {
-          "branch": "master",
-          "revision": "80b1c3005ee25b4c7ce46c4029ac3347e8d5e37e",
-          "version": null
+          "branch": null,
+          "revision": "67fa55813b9e7b3b9acee9c0ae501def28746d76",
+          "version": "2.1.2"
         }
       }
     ]

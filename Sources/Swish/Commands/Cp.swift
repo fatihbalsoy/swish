@@ -66,7 +66,7 @@ class _command_cp: Command {
                     // FIXME: Needs -R and -n
                     let sourceFile = sourcePath.lastPathComponent ?? ""
                     let input = args.joined(separator: " ") + "/" + sourceFile
-                    Bash(session: session).execute("cp \(input)", hidden: true) { (exit) in }
+                    Swish(session: session).execute("cp \(input)", hidden: true) { (exit) in }
                     return 0
                 }
                 if overwrite {

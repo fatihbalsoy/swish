@@ -1,44 +1,44 @@
 import XCTest
-@testable import Bash
+@testable import Swish
 
-final class CdTests: BashInit {
+final class CdTests: SwishInit {
     let dir = "/tmp/xctest/cd"
     
     func testCommandUsage() {
-        bash.execute("cd nonexistent_folder/xctest") { (exit) in
+        swish.execute("cd nonexistent_folder/xctest") { (exit) in
             XCTAssertEqual(1, exit)
         }
-        bash.execute("cd") { (exit) in
+        swish.execute("cd") { (exit) in
             XCTAssertEqual(1, exit)
             
-            let stderr = self.bash.session.stderr
+            let stderr = self.swish.session.stderr
             XCTAssert(stderr.last?.stream.last?.starts(with: "usage: cd") ?? false)
         }
     }
     
     func testDirectoryForward() {
-        bash.execute("mkdir \(dir)") { (exit) in
+        swish.execute("mkdir \(dir)") { (exit) in
             XCTAssertEqual(exit, 0)
         }
-        bash.execute("cd \(dir)") { (exit) in
+        swish.execute("cd \(dir)") { (exit) in
             XCTAssertEqual(0, exit)
             
-            let path = self.bash.session.currentPath.lastPathComponent
+            let path = self.swish.session.currentPath.lastPathComponent
             let name = self.dir.components(separatedBy: "/").last
             XCTAssertEqual(path, name)
         }
     }
     
     func testDirectoryBackward() {
-        bash.execute("mkdir \(dir)") { (exit) in }
-        bash.execute("cd \(dir)") { (exit) in
+        swish.execute("mkdir \(dir)") { (exit) in }
+        swish.execute("cd \(dir)") { (exit) in
             XCTAssertEqual(exit, 0)
         }
-        bash.execute("cd ..") { (exit) in
+        swish.execute("cd ..") { (exit) in
             XCTAssertEqual(0, exit)
             
-            print(self.bash.session.currentPath)
-            let path = self.bash.session.currentPath.lastPathComponent
+            print(self.swish.session.currentPath)
+            let path = self.swish.session.currentPath.lastPathComponent
             let split = self.dir.components(separatedBy: "/")
             let name = split[split.count - 2]
             XCTAssertEqual(path, name)
@@ -46,33 +46,33 @@ final class CdTests: BashInit {
     }
     
     func testHomeDirectory() {
-        bash.execute("cd \(dir)") { (exit) in }
-        bash.execute("cd ~") { (exit) in
+        swish.execute("cd \(dir)") { (exit) in }
+        swish.execute("cd ~") { (exit) in
             XCTAssertEqual(0, exit)
             
-            let path = self.bash.session.currentPath.lastPathComponent
+            let path = self.swish.session.currentPath.lastPathComponent
             XCTAssertEqual(path, self.user)
         }
     }
     
     func testRootDirectory() {
-        bash.execute("cd \(dir)") { (exit) in }
-        bash.execute("cd /") { (exit) in
+        swish.execute("cd \(dir)") { (exit) in }
+        swish.execute("cd /") { (exit) in
             XCTAssertEqual(0, exit)
             
-            let path = self.bash.session.currentPath.lastPathComponent
+            let path = self.swish.session.currentPath.lastPathComponent
             XCTAssertEqual(path, self.root)
         }
     }
     
     func testResetPath() {
-        bash.execute("cd ~") { (exit) in
+        swish.execute("cd ~") { (exit) in
             XCTAssertEqual(exit, 0)
         }
     }
     
     func testRemoveDirectories() {
-        bash.execute("rm -rf \(dir)") { (exit) in
+        swish.execute("rm -rf \(dir)") { (exit) in
             XCTAssertEqual(exit, 0)
         }
     }
