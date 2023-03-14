@@ -9,7 +9,7 @@
 
 Swish is a Swift-based project that recreates a shell environment similar to Bash without relying on virtualization. It has a variety of potential uses in Swift applications, including emulating a terminal within a game or app, testing new features without a UI, and etc. With Swish, developers can enjoy the flexibility and functionality of a shell environment without needing to virtualize Bash/Zsh.
 
-Developers can expand the capabilities of Swish by creating their own commands. Instructions can be found [here](https://github.com/fatihbalsoy/swish/blob/master/README.md#custom-commands).
+Developers can expand the capabilities of Swish by creating their own commands. Instructions can be found [here](https://github.com/fatihbalsoy/swish#custom-commands).
 
 The nature of this Swift Package should be compliant with Apple's App Store policies. Although this has not been tested.
 
