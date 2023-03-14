@@ -85,6 +85,13 @@ class Example: ShellSessionDelegate {
 ### ShellSessionDelegate functions
 
 ```swift
+func terminal(didUpdateOutput session: ShellSession)
+```
+Triggered when an output was added to stdout or stderr. Can be used to update the terminal interface.
+
+<br>
+
+```swift
 func terminal(didClearOutput session: ShellSession)
 ```
 Triggered when the `clear` command is executed. Can be used to clear a custom terminal interface.
