@@ -149,7 +149,7 @@ Triggered when the `exit` command is executed. Can be used to close a view contr
 - [ ] `wait` - wait until a process ends
 - [x] `zip` - zip files
 
-Control flow statements like `if`, `while`, and `for` are not yet available.
+Flow control statements like `if`, `while`, and `for` are not yet available.
 
 ### Custom Commands
 
