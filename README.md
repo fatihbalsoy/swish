@@ -105,26 +105,51 @@ Triggered when the `exit` command is executed. Can be used to close a view contr
 
 ## Commands
 
+- [ ] `alias` - create an alias for a command
 - [x] `cat` - display file contents
 - [x] `cd` - change directory
 - [x] `clear` - clear terminal
 - [x] `cp` - copy files
 - [x] `date` - display date
+- [ ] `defaults` - modify UserDefaults on Darwin systems
 - [x] `echo` - display anything
+- [ ] `eval` - concatenate arguments into a single command
+- [ ] `exec` - replace shell without creating a new process
 - [x] `exit` - exit terminal
 - [x] `export` - save variables
-- [x] `expr` - solve math expressions
+- [x] `expr` - evaluate math expressions
+- [ ] `getopts` - parse positional parameters
+- [ ] `hash` - remember command pathname
 - [x] `help` - list commands
 - [x] `history` - display session history
+- [ ] `let` - evaluate arithmetic expressions
+- [ ] `local` - create a local variable
+- [ ] `logout` - logout of user session
 - [x] `ls` - list files
+- [ ] `kill` - stop a process
+- [ ] `man` - a more detailed help page for commands
 - [x] `mkdir` - create folders
 - [ ] `mv` - move files and folders
+- [ ] `printf` - display a formatted string
 - [x] `pwd` - display current working directory
+- [ ] `read` - read one line from standard input
+- [ ] `return` - stop a command and returns a value
 - [x] `rm` - remove files and folders
+- [ ] `set` - display all variables
+- [ ] `shift` - shift positional parameters
+- [ ] `sleep` - delay session
+- [ ] `source` - run a swish file
+- [ ] `times` - display times used by the shell
 - [x] `touch` - create files
+- [ ] `test` - return 0 or 1 according to given conditional
+- [ ] `unalias` - remove an alias
 - [x] `uname` - display basic system info
+- [ ] `unset` - remove variables
 - [x] `unzip` - unzip archives
+- [ ] `wait` - wait until a process ends
 - [x] `zip` - zip files
+
+Control flow statements like `if`, `while`, and `for` are not yet available.
 
 ### Custom Commands
 
