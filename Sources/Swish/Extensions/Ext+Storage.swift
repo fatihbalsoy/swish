@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class BashStorage {
+public class SwishStorage {
     private var variables = [String:String]()
     
     public func get() -> [String : String] {

@@ -48,7 +48,7 @@ public class ShellSession: NSObject {
     let uuid: String
     
     /// Stores variables created during the session
-    public var storage = BashStorage()
+    public var storage = SwishStorage()
     
     /// Root path of the current shell environment is set to a sandboxed documents folder
     let rootPath: NSURL
