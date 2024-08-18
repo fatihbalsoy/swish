@@ -59,9 +59,10 @@ class Example: ShellSessionDelegate {
 
         // Execute `echo` command
         execute("echo hello there!")
+        execute("echo kenobi")
 
         // Execute `touch` command
-        execute("touch kenobi.txt")
+        execute("touch grass.txt")
     }
 
     // Command execution
